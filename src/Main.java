@@ -1,10 +1,10 @@
+import com.google.gson.Gson;
+
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -68,19 +68,42 @@ public class Main
             this.message = message;
         }
 
+        public int getRevnoInt()
+        {
+            try
+            {
+                String revno = getRevno().replace( "revno: ", "" ).trim();
+                int blank = revno.indexOf( " " );
+                if ( blank != -1 )
+                {
+                    revno = revno.substring( 0, blank );
+                }
+                return Integer.parseInt( revno );
+            }
+            catch ( NumberFormatException e )
+            {
+                e.printStackTrace();
+                return 1;
+            }
+        }
+
+        public boolean isNull()
+        {
+            return getRevno() == null;
+        }
+
         @Override public String toString()
         {
-            return "BzrItem{" +
-                "revno='" + revno + '\'' +
-                ", committer='" + committer + '\'' +
-                ", branch_nick='" + branch_nick + '\'' +
-                ", timestamp='" + timestamp + '\'' +
-                ", message='" + message + '\'' +
-                '}';
+            return
+                revno + "\n" +
+                committer + "\n" +
+                branch_nick + "\n" +
+                timestamp + "\n" +
+                message;
         }
     }
 
-    class Data
+    class Config
     {
         private String path;
 
@@ -104,20 +127,31 @@ public class Main
 
     public static void main( String[] args ) throws Exception
     {
-//        Data data = new Gson().fromJson( new InputStreamReader( new FileInputStream( "config.json" ) ), Data.class );
-//        String command = "cd ";
-//        command+=data.getPath();
-//        command+="; pwd";
-//        try
-//        {
-//            runCommand( command );
-//        } catch (Exception t)
-//        {
-//            t.printStackTrace();
-//        }
+        List<BzrItem> bzrItems = readBzrLog();
 
-        readWriteFile();
+        Config config = new Gson().fromJson( new InputStreamReader( new FileInputStream( "config.json" ) ), Config.class );
+        String command = "cd ";
+        command += config.getPath();
+        command += "; pwd; ";
 
+        Collections.sort( bzrItems, ( o1, o2 ) -> {
+            return o1.getRevnoInt() - o2.getRevnoInt();
+        } );
+
+        for ( int i = 0; i < bzrItems.size(); i++ )
+        {
+            BzrItem item = bzrItems.get( i );
+            String bzrCommand = command + "bzr up -r " + item.getRevnoInt();
+            String gitCommand = bzrCommand + "; git add *; git commit -m \"" + item.toString() + "\"";
+            try
+            {
+                runCommand( gitCommand );
+            }
+            catch ( Exception t )
+            {
+                t.printStackTrace();
+            }
+        }
     }
 
     public static void runCommand( String command ) throws Exception
@@ -151,31 +185,29 @@ public class Main
         System.out.println( "Process exitValue: " + exitVal );
     }
 
-    public static void readWriteFile() throws Exception
+    public static List<BzrItem> readBzrLog() throws Exception
     {
+        List<BzrItem> bzrItems = new ArrayList<>();
         FileInputStream in = null;
-        FileOutputStream out = null;
-
         try
         {
             in = new FileInputStream( "bzr-2_20_brief" );
-            out = new FileOutputStream( "output.txt" );
-            BufferedWriter bw = new BufferedWriter( new OutputStreamWriter( out ) );
             Scanner scanner = new Scanner( in );
-            List<BzrItem> bzrItems = new ArrayList<>();
             String msg = "";
             BzrItem item = new BzrItem();
             while ( scanner.hasNext() )
             {
-
                 String line = scanner.nextLine();
                 if ( line.startsWith( "------------------------------------------------------------" ) )
                 {
                     item.setMessage( msg );
 
-                    System.out.println(item);
-                    msg="";
-                    item=new BzrItem();
+                    if ( !item.isNull() )
+                    {
+                        bzrItems.add( item );
+                    }
+                    msg = "";
+                    item = new BzrItem();
                 }
                 else if ( line.startsWith( "revno" ) )
                 {
@@ -195,13 +227,9 @@ public class Main
                 }
                 else
                 {
-                    msg+="\n" + line;
+                    msg += line + "\n";
                 }
             }
-            bw.write( "lsakdf" );
-            bw.newLine();
-
-            bw.close();
         }
         finally
         {
@@ -209,10 +237,7 @@ public class Main
             {
                 in.close();
             }
-            if ( out != null )
-            {
-                out.close();
-            }
+            return bzrItems;
         }
     }
 }
