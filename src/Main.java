@@ -1,9 +1,12 @@
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.Scanner;
 
 public class Main
 {
@@ -32,16 +35,18 @@ public class Main
     public static void main( String[] args ) throws Exception
     {
         Data data = new Gson().fromJson( new InputStreamReader( new FileInputStream( "config.json" ) ), Data.class );
+        String command = "cd ";
+        command+=data.getPath();
+        command+="; pwd; bzr up -r 3";
+        try
+        {
+            runCommand( command );
+        } catch (Exception t)
+        {
+            t.printStackTrace();
+        }
 
-        System.out.println( data );
-
-//        try
-//        {
-//            runCommand( "cd /Volumes/MACData/1ENGLISH; pwd" );
-//        } catch (Exception t)
-//        {
-//            t.printStackTrace();
-//        }
+//        readWriteFile();
 
     }
 
@@ -83,15 +88,18 @@ public class Main
 
         try
         {
-            in = new FileInputStream( "config.json" );
+            in = new FileInputStream( "bzr-2_20" );
             out = new FileOutputStream( "output.txt" );
 
+            Scanner scanner = new Scanner( in );
 
-            int c;
-            while ( (c = in.read()) != -1 )
-            {
-                out.write( c );
-            }
+
+            BufferedWriter bw = new BufferedWriter( new OutputStreamWriter( out ) );
+            bw.write( "lsakdf" );
+            bw.newLine();
+            bw.write( "laskdfj" );
+
+            bw.close();
         }
         finally
         {
