@@ -1,16 +1,40 @@
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 
 public class Main {
 
-    public static void main(String[] args){
-        try
-        {
-            runCommand( "cd /Volumes/MACData/1ENGLISH; pwd" );
-        } catch (Exception t)
-        {
-            t.printStackTrace();
+    public static void main(String[] args) throws Exception{
+
+        FileInputStream in = null;
+        FileOutputStream out = null;
+
+        try {
+            in = new FileInputStream("config.json");
+            out = new FileOutputStream("output.txt");
+
+
+            int c;
+            while ((c = in.read()) != -1) {
+                out.write(c);
+            }
+        }finally {
+            if (in != null) {
+                in.close();
+            }
+            if (out != null) {
+                out.close();
+            }
         }
+
+//        try
+//        {
+//            runCommand( "cd /Volumes/MACData/1ENGLISH; pwd" );
+//        } catch (Exception t)
+//        {
+//            t.printStackTrace();
+//        }
 
     }
     public static void runCommand(String command) throws Exception{
@@ -40,4 +64,5 @@ public class Main {
         int exitVal = proc.waitFor();
         System.out.println("Process exitValue: " + exitVal);
     }
+
 }
