@@ -14,7 +14,7 @@ import java.util.Scanner;
 public class Main
 {
     public static String CONFIG_FILE = "config.json";
-    public static String COMMIT_FILE = "bzr-2_20_brief";
+    public static String COMMIT_FILE = "bzr-2_20";
     public static String OUTPUT_FILE = "output.txt";
 
     static class BzrItem
@@ -178,18 +178,18 @@ public class Main
                 command );
             processBuilder.redirectErrorStream( true );
             Process proc = processBuilder.start();
-            BufferedReader stdInput = new BufferedReader( new
-                InputStreamReader( proc.getInputStream() ) );
-
+//            BufferedReader stdInput = new BufferedReader( new
+//                InputStreamReader( proc.getInputStream() ) );
+//
             BufferedReader stdError = new BufferedReader( new
                 InputStreamReader( proc.getErrorStream() ) );
-
+//
             String s = null;
-            while ( (s = stdInput.readLine()) != null )
-            {
-                System.out.println( s );
-            }
-
+//            while ( (s = stdInput.readLine()) != null )
+//            {
+//                System.out.println( s );
+//            }
+//
             while ( (s = stdError.readLine()) != null )
             {
                 System.out.println( s );
