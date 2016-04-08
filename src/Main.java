@@ -1,8 +1,11 @@
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,6 +13,10 @@ import java.util.Scanner;
 
 public class Main
 {
+    public static String CONFIG_FILE = "config.json";
+    public static String COMMIT_FILE = "bzr-2_20_brief";
+    public static String OUTPUT_FILE = "output.txt";
+
     static class BzrItem
     {
         private String revno;
@@ -96,32 +103,36 @@ public class Main
         {
             return
                 revno + "\n" +
-                committer + "\n" +
-                branch_nick + "\n" +
-                timestamp + "\n" +
-                message;
+                    committer + "\n" +
+                    branch_nick + "\n" +
+                    timestamp + "\n" +
+                    message;
         }
     }
 
     class Config
     {
-        private String path;
+        private String path_bzr;
+        private String path_git;
 
-        public String getPath()
+        public String getPath_bzr()
         {
-            return path;
+            return path_bzr;
         }
 
-        public void setPath( String path )
+        public void setPath_bzr( String path_bzr )
         {
-            this.path = path;
+            this.path_bzr = path_bzr;
         }
 
-        @Override public String toString()
+        public String getPath_git()
         {
-            return "Data{" +
-                "path='" + path + '\'' +
-                '}';
+            return path_git;
+        }
+
+        public void setPath_git( String path_git )
+        {
+            this.path_git = path_git;
         }
     }
 
@@ -129,60 +140,76 @@ public class Main
     {
         List<BzrItem> bzrItems = readBzrLog();
 
-        Config config = new Gson().fromJson( new InputStreamReader( new FileInputStream( "config.json" ) ), Config.class );
-        String command = "cd ";
-        command += config.getPath();
-        command += "; pwd; ";
+        Config config = new Gson().fromJson( new InputStreamReader( new FileInputStream( CONFIG_FILE ) ), Config.class );
+        String cdBzr = "cd " + config.getPath_bzr() + "; pwd; ";
+        String cdGit = "cd " + config.getPath_git() + "; pwd; ";
 
         Collections.sort( bzrItems, ( o1, o2 ) -> {
             return o1.getRevnoInt() - o2.getRevnoInt();
         } );
-
-        for ( int i = 0; i < bzrItems.size(); i++ )
+        FileOutputStream out = new FileOutputStream( OUTPUT_FILE );
+        BufferedWriter bw = new BufferedWriter( new OutputStreamWriter( out ) );
+        for ( BzrItem item : bzrItems )
         {
-            BzrItem item = bzrItems.get( i );
-            String bzrCommand = command + "bzr up -r " + item.getRevnoInt();
-            String gitCommand = bzrCommand + "; git add *; git commit -m \"" + item.toString() + "\"";
+            String bzrCommand = cdBzr + "bzr up -r " + item.getRevnoInt();
+            String gitCommand = bzrCommand + "; " + cdGit + "git add *; git commit -m \"" + item.toString() + "\"";
             try
             {
-                runCommand( gitCommand );
+                runCommand(  bw, gitCommand );
             }
             catch ( Exception t )
             {
                 t.printStackTrace();
             }
         }
+        bw.close();
+        out.close();
     }
 
-    public static void runCommand( String command ) throws Exception
+    public static void runCommand( BufferedWriter bw, String command ) throws Exception
     {
+        int exit_value = -1;
         System.out.println( "Running command: " + command );
-
-        ProcessBuilder processBuilder = new ProcessBuilder(
-            "bash",
-            "-c",
-            command );
-        processBuilder.redirectErrorStream( true );
-        Process proc = processBuilder.start();
-        BufferedReader stdInput = new BufferedReader( new
-            InputStreamReader( proc.getInputStream() ) );
-
-        BufferedReader stdError = new BufferedReader( new
-            InputStreamReader( proc.getErrorStream() ) );
-
-        String s = null;
-        while ( (s = stdInput.readLine()) != null )
+        try
         {
-            System.out.println( s );
-        }
+            ProcessBuilder processBuilder = new ProcessBuilder(
+                "bash",
+                "-c",
+                command );
+            processBuilder.redirectErrorStream( true );
+            Process proc = processBuilder.start();
+            BufferedReader stdInput = new BufferedReader( new
+                InputStreamReader( proc.getInputStream() ) );
 
-        while ( (s = stdError.readLine()) != null )
+            BufferedReader stdError = new BufferedReader( new
+                InputStreamReader( proc.getErrorStream() ) );
+
+            String s = null;
+            while ( (s = stdInput.readLine()) != null )
+            {
+                System.out.println( s );
+            }
+
+            while ( (s = stdError.readLine()) != null )
+            {
+                System.out.println( s );
+            }
+
+            exit_value = proc.waitFor();
+            System.out.println( "Process exitValue: " + exit_value );
+        }
+        finally
         {
-            System.out.println( s );
+            try
+            {
+                bw.write( "\"Running command: \"" + command + " \n" + "Process exitValue: " + exit_value );
+                bw.newLine();
+            }
+            finally
+            {
+                bw.flush();
+            }
         }
-
-        int exitVal = proc.waitFor();
-        System.out.println( "Process exitValue: " + exitVal );
     }
 
     public static List<BzrItem> readBzrLog() throws Exception
@@ -191,7 +218,7 @@ public class Main
         FileInputStream in = null;
         try
         {
-            in = new FileInputStream( "bzr-2_20_brief" );
+            in = new FileInputStream( COMMIT_FILE );
             Scanner scanner = new Scanner( in );
             String msg = "";
             BzrItem item = new BzrItem();
@@ -237,7 +264,7 @@ public class Main
             {
                 in.close();
             }
-            return bzrItems;
         }
+        return bzrItems;
     }
 }
