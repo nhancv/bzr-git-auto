@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class Main
 {
     public static String CONFIG_FILE = "config.json";
-    public static String COMMIT_FILE = "bzr-2_20_brief";
+    public static String COMMIT_FILE = "bzr-2_20";
     public static String OUTPUT_FILE = "output.txt";
 
     static class BzrItem
@@ -156,7 +156,7 @@ public class Main
         for ( BzrItem item : bzrItems )
         {
             String bzrCommand = cdBzr + "bzr up -r " + item.getRevnoInt();
-            String gitCommand = bzrCommand + "; " + cdGit + "git add *; git commit -m \"" + item.toString() + "\"";
+            String gitCommand = bzrCommand + "; " + cdGit + "git add -A .; git commit -m \"" + item.toString() + "\"";
             try
             {
                 runCommand( bw, gitCommand );
@@ -196,18 +196,18 @@ public class Main
                 command );
             processBuilder.redirectErrorStream( true );
             Process proc = processBuilder.start();
-//            BufferedReader stdInput = new BufferedReader( new
-//                InputStreamReader( proc.getInputStream() ) );
-//
+            BufferedReader stdInput = new BufferedReader( new
+                InputStreamReader( proc.getInputStream() ) );
+
             BufferedReader stdError = new BufferedReader( new
                 InputStreamReader( proc.getErrorStream() ) );
-//
+
             String s = null;
-//            while ( (s = stdInput.readLine()) != null )
-//            {
-//                System.out.println( s );
-//            }
-//
+            while ( (s = stdInput.readLine()) != null )
+            {
+                System.out.println( s );
+            }
+
             while ( (s = stdError.readLine()) != null )
             {
                 System.out.println( s );

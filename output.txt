@@ -1,5 +1,5 @@
-Start: Sat Apr 09 00:29:10 IST 2016
-"Running command: "cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; bzr up -r 1; cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; git add *; git commit -m "revno: 1
+Start: Sat Apr 09 00:33:58 IST 2016
+"Running command: "cd /Volumes/MACData/Projects/DHIS2-IN/cores/dhis-2.20; pwd; bzr up -r 1; cd /Volumes/MACData/Projects/DHIS2-IN/cores/dhis-2.20; pwd; git add *; git commit -m "revno: 1
 committer: Lars Helge Oeverland larshelge@gmail.com
 branch nick: trunk
 timestamp: Tue 2009-03-03 17:46:36 +0100
@@ -7,7 +7,7 @@ message:
   Initial check-in
 " 
 Process exitValue: 0
-"Running command: "cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; bzr up -r 2; cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; git add *; git commit -m "revno: 2
+"Running command: "cd /Volumes/MACData/Projects/DHIS2-IN/cores/dhis-2.20; pwd; bzr up -r 2; cd /Volumes/MACData/Projects/DHIS2-IN/cores/dhis-2.20; pwd; git add *; git commit -m "revno: 2
 committer: abyot <abyota@gmail.com>
 branch nick: trunk
 timestamp: Sun 2009-03-08 16:27:22 +0530
@@ -15,13 +15,3 @@ message:
   My First commit -- just a  test.
 " 
 Process exitValue: 0
-"Running command: "cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; bzr up -r 3; cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; git add *; git commit -m "revno: 3
-committer: abyot <abyota@gmail.com>
-branch nick: trunk
-timestamp: Sun 2009-03-08 16:51:22 +0530
-message:
-  DataEntry made not to let users enter value for future periods.
-" 
-Process exitValue: 0
-Finished: Sat Apr 09 00:29:15 IST 2016
-Total: 0 hour(s) 0 min(s) 4 sec(s)
