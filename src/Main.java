@@ -8,13 +8,15 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class Main
 {
     public static String CONFIG_FILE = "config.json";
-    public static String COMMIT_FILE = "bzr-2_20";
+    public static String COMMIT_FILE = "bzr-2_20_brief";
     public static String OUTPUT_FILE = "output.txt";
 
     static class BzrItem
@@ -149,21 +151,37 @@ public class Main
         } );
         FileOutputStream out = new FileOutputStream( OUTPUT_FILE );
         BufferedWriter bw = new BufferedWriter( new OutputStreamWriter( out ) );
+        Date start = new Date();
+        writeLog( bw, "Start: " + start );
         for ( BzrItem item : bzrItems )
         {
             String bzrCommand = cdBzr + "bzr up -r " + item.getRevnoInt();
             String gitCommand = bzrCommand + "; " + cdGit + "git add *; git commit -m \"" + item.toString() + "\"";
             try
             {
-                runCommand(  bw, gitCommand );
+                runCommand( bw, gitCommand );
             }
             catch ( Exception t )
             {
                 t.printStackTrace();
             }
         }
+        Date end = new Date();
+        writeLog( bw, "Finished: " + end );
+        writeLog( bw, "Total: " + getTimeDiff( start, end ) );
         bw.close();
         out.close();
+    }
+
+    public static String getTimeDiff( Date dateOne, Date dateTwo )
+    {
+        String diff = "";
+        long timeDiff = Math.abs( dateOne.getTime() - dateTwo.getTime() );
+        long diffInSeconds = TimeUnit.MILLISECONDS.toSeconds( timeDiff );
+        long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes( timeDiff );
+        long diffInHours = TimeUnit.MILLISECONDS.toHours( timeDiff );
+        diff = String.format( "%d hour(s) %d min(s) %d sec(s)", diffInHours, diffInMinutes, diffInSeconds );
+        return diff;
     }
 
     public static void runCommand( BufferedWriter bw, String command ) throws Exception
@@ -200,15 +218,20 @@ public class Main
         }
         finally
         {
-            try
-            {
-                bw.write( "\"Running command: \"" + command + " \n" + "Process exitValue: " + exit_value );
-                bw.newLine();
-            }
-            finally
-            {
-                bw.flush();
-            }
+            writeLog( bw, "\"Running command: \"" + command + " \n" + "Process exitValue: " + exit_value );
+        }
+    }
+
+    public static void writeLog( BufferedWriter bw, String msg ) throws Exception
+    {
+        try
+        {
+            bw.write( msg );
+            bw.newLine();
+        }
+        finally
+        {
+            bw.flush();
         }
     }
 
