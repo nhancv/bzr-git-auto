@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -16,8 +17,8 @@ import java.util.concurrent.TimeUnit;
 public class Main
 {
     public static String CONFIG_FILE = "config.json";
-    public static String COMMIT_FILE = "bzr-2_20";
-    public static String OUTPUT_FILE = "output.txt";
+    public static String COMMIT_FILE = "commit-data";
+    public static String OUTPUT_FILE = "log";
 
     static class BzrItem
     {
@@ -140,6 +141,20 @@ public class Main
 
     public static void main( String[] args ) throws Exception
     {
+
+        System.out.println(args.length);
+        if ( args.length == 1 )
+        {
+            CONFIG_FILE = args[0];
+        }
+        else if ( args.length == 2 )
+        {
+            COMMIT_FILE = args[1];
+            OUTPUT_FILE = COMMIT_FILE + (new SimpleDateFormat("-dd_MM_yyyy_hh_mm_ss")).format(new Date());
+        }
+        System.out.println(CONFIG_FILE);
+        System.out.println(COMMIT_FILE);
+        System.out.println(OUTPUT_FILE);
         List<BzrItem> bzrItems = readBzrLog();
 
         Config config = new Gson().fromJson( new InputStreamReader( new FileInputStream( CONFIG_FILE ) ), Config.class );
@@ -177,9 +192,9 @@ public class Main
     {
         String diff = "";
         long timeDiff = Math.abs( dateOne.getTime() - dateTwo.getTime() );
-        long diffInSeconds = TimeUnit.MILLISECONDS.toSeconds( timeDiff );
-        long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes( timeDiff );
         long diffInHours = TimeUnit.MILLISECONDS.toHours( timeDiff );
+        long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes( timeDiff ) - diffInHours * 60;
+        long diffInSeconds = TimeUnit.MILLISECONDS.toSeconds( timeDiff ) - diffInMinutes * 60 - diffInHours * 3600;
         diff = String.format( "%d hour(s) %d min(s) %d sec(s)", diffInHours, diffInMinutes, diffInSeconds );
         return diff;
     }

@@ -41,7 +41,18 @@ Everything ok now
 ----------------
 
 ## Running
-Open project with IDE, run, view log
+Option 1: Open project with IDE, run, view log
+Option 2: Run jar file with command
+
+Run with custom config file and commit data file path
+```java
+java -jar bzr-git-auto.jar config.json commit-data
+```
+
+Run with no custom path file
+```java
+java -jar bzr-git-auto.jar
+```
 
 ## Utils command
 ### Git
