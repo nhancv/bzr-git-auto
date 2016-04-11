@@ -82,7 +82,7 @@ public class Main
         {
             try
             {
-                String revno = getRevno().replace( "revno: ", "" ).trim();
+                String revno = getRevno().trim();
                 int blank = revno.indexOf( " " );
                 if ( blank != -1 )
                 {
@@ -105,11 +105,11 @@ public class Main
         @Override public String toString()
         {
             return
-                revno + "\n" +
-                    committer + "\n" +
-                    branch_nick + "\n" +
-                    timestamp + "\n" +
-                    message;
+                    "revno: " + revno + "\n" +
+                    message + "\n" +
+                    "committer: " + committer + "\n" +
+                    "branch nick: " + branch_nick + "\n" +
+                    "timestamp: " + timestamp;
         }
     }
 
@@ -142,7 +142,7 @@ public class Main
     public static void main( String[] args ) throws Exception
     {
 
-        System.out.println(args.length);
+        System.out.println( "Args: " + args.length );
         if ( args.length == 1 )
         {
             CONFIG_FILE = args[0];
@@ -150,11 +150,11 @@ public class Main
         else if ( args.length == 2 )
         {
             COMMIT_FILE = args[1];
-            OUTPUT_FILE = COMMIT_FILE + (new SimpleDateFormat("-dd_MM_yyyy_hh_mm_ss")).format(new Date());
+            OUTPUT_FILE = COMMIT_FILE + (new SimpleDateFormat( "-dd_MM_yyyy_hh_mm_ss" )).format( new Date() );
         }
-        System.out.println(CONFIG_FILE);
-        System.out.println(COMMIT_FILE);
-        System.out.println(OUTPUT_FILE);
+        System.out.println( "CONFIG_FILE: " + CONFIG_FILE );
+        System.out.println( "COMMIT_FILE: " + COMMIT_FILE );
+        System.out.println( "OUTPUT_FILE: " + OUTPUT_FILE );
         List<BzrItem> bzrItems = readBzrLog();
 
         Config config = new Gson().fromJson( new InputStreamReader( new FileInputStream( CONFIG_FILE ) ), Config.class );
@@ -171,7 +171,7 @@ public class Main
         for ( BzrItem item : bzrItems )
         {
             String bzrCommand = cdBzr + "bzr up -r " + item.getRevnoInt();
-            String gitCommand = bzrCommand + "; " + cdGit + "git add -A .; git commit -m \"" + item.toString() + "\"";
+            String gitCommand = bzrCommand + "; " + cdGit + "git add -A .; GIT_AUTHOR_DATE=\"" + item.getTimestamp() + "\" GIT_COMMITTER_DATE=\"" + item.getTimestamp() + "\" git commit -m \"" + item.toString() + "\" --author \"" + item.getCommitter() + "\"";
             try
             {
                 runCommand( bw, gitCommand );
@@ -276,19 +276,31 @@ public class Main
                 }
                 else if ( line.startsWith( "revno" ) )
                 {
-                    item.setRevno( line );
+                    item.setRevno( line.replace( "revno: ", "" ).trim() );
                 }
                 else if ( line.startsWith( "committer" ) )
                 {
-                    item.setCommitter( line );
+                    String committer = line.replace( "committer: ", "" ).trim();
+                    int lastBlack = committer.lastIndexOf( " " );
+                    if ( lastBlack != -1 )
+                    {
+                        String tmp = committer.substring( lastBlack + 1 );
+                        if ( !tmp.startsWith( "<" ) )
+                        {
+                            committer = committer.replace( tmp, "<" + tmp + ">" );
+                        }
+                    }
+                    System.out.println( committer );
+
+                    item.setCommitter( committer );
                 }
                 else if ( line.startsWith( "branch nick" ) )
                 {
-                    item.setBranch_nick( line );
+                    item.setBranch_nick( line.replace( "branch nick: ", "" ).trim() );
                 }
                 else if ( line.startsWith( "timestamp" ) )
                 {
-                    item.setTimestamp( line );
+                    item.setTimestamp( line.replace( "timestamp: ", "" ).trim() );
                 }
                 else
                 {

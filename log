@@ -1,27 +1,27 @@
-Start: Sun Apr 10 21:55:06 IST 2016
-"Running command: "cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; bzr up -r 1; cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; git add -A .; git commit -m "revno: 1
-committer: Lars Helge Oeverland larshelge@gmail.com
-branch nick: trunk
-timestamp: Tue 2009-03-03 17:46:36 +0100
+Start: Mon Apr 11 13:29:46 IST 2016
+"Running command: "cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; bzr up -r 1; cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; git add -A .; GIT_AUTHOR_DATE="Tue 2009-03-03 17:46:36 +0100" GIT_COMMITTER_DATE="Tue 2009-03-03 17:46:36 +0100" git commit -m "revno: 1
 message:
   Initial check-in
-" 
-Process exitValue: 0
-"Running command: "cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; bzr up -r 2; cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; git add -A .; git commit -m "revno: 2
-committer: abyot <abyota@gmail.com>
+
+committer: Lars Helge Oeverland <larshelge@gmail.com>
 branch nick: trunk
-timestamp: Sun 2009-03-08 16:27:22 +0530
+timestamp: Tue 2009-03-03 17:46:36 +0100" --author "Lars Helge Oeverland <larshelge@gmail.com>" 
+Process exitValue: 0
+"Running command: "cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; bzr up -r 2; cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; git add -A .; GIT_AUTHOR_DATE="Sun 2009-03-08 16:27:22 +0530" GIT_COMMITTER_DATE="Sun 2009-03-08 16:27:22 +0530" git commit -m "revno: 2
 message:
   My First commit -- just a  test.
-" 
-Process exitValue: 0
-"Running command: "cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; bzr up -r 3; cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; git add -A .; git commit -m "revno: 3
+
 committer: abyot <abyota@gmail.com>
 branch nick: trunk
-timestamp: Sun 2009-03-08 16:51:22 +0530
+timestamp: Sun 2009-03-08 16:27:22 +0530" --author "abyot <abyota@gmail.com>" 
+Process exitValue: 0
+"Running command: "cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; bzr up -r 3; cd /Users/nhancao/Desktop/2.20_in/dhis2.20_in; pwd; git add -A .; GIT_AUTHOR_DATE="Sun 2009-03-08 16:51:22 +0530" GIT_COMMITTER_DATE="Sun 2009-03-08 16:51:22 +0530" git commit -m "revno: 3
 message:
   DataEntry made not to let users enter value for future periods.
-" 
+
+committer: abyot <abyota@gmail.com>
+branch nick: trunk
+timestamp: Sun 2009-03-08 16:51:22 +0530" --author "abyot <abyota@gmail.com>" 
 Process exitValue: 0
-Finished: Sun Apr 10 21:55:11 IST 2016
+Finished: Mon Apr 11 13:29:51 IST 2016
 Total: 0 hour(s) 0 min(s) 5 sec(s)
