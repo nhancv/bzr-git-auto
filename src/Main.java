@@ -143,11 +143,11 @@ public class Main
     {
 
         System.out.println( "Args: " + args.length );
-        if ( args.length == 1 )
+        if ( args.length > 0 )
         {
             CONFIG_FILE = args[0];
         }
-        else if ( args.length == 2 )
+        if ( args.length >1 )
         {
             COMMIT_FILE = args[1];
             OUTPUT_FILE = COMMIT_FILE + (new SimpleDateFormat( "-dd_MM_yyyy_hh_mm_ss" )).format( new Date() );
@@ -290,8 +290,6 @@ public class Main
                             committer = committer.replace( tmp, "<" + tmp + ">" );
                         }
                     }
-                    System.out.println( committer );
-
                     item.setCommitter( committer );
                 }
                 else if ( line.startsWith( "branch nick" ) )
