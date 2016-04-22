@@ -1,0 +1,36 @@
+If the first time: 
+Get source from launchpad: 
+bzr branch lp:dhis2
+
+If update: 
+bzr bind lp:dhis2
+bzr up
+bzr unbind
+
+Get commit-data file: 
+bzr log > commit-data
+
+Move commit-data outside project folder
+Modify path in config.json file
+
+IF RUN WITH DIFFERENCE .BZR CONFIG:
+Delete source code in project folder
+Preparing:
+bzr rm *
+bzr revert
+bzr diff
+Use git gui to tracking: 
+- Add all file from unstaged file to staged files
+- Revert some initial file (README.md)
+Go to project folder, delete all folder or file contain .~1~
+And now everything will normal
+
+
+
+Run command:
+java -jar bzr-git-auto.jar config.json commit-data 
+
+
+
+
+
